@@ -6,7 +6,7 @@ const Header = () =>{
 
     return (
         <div className="Header bg-amber-100 flex justify-center h-16" >
-            <h1 className="">Hello</h1>
+            <h1 className="">MapAI</h1>
         </div>
     );
 }

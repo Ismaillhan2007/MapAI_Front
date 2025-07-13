@@ -42,8 +42,7 @@ const Main =()=>{
     const[isModalOpen,setIsModalOpen] = useState(true);
     return(
         <div className="p-8">
-            <h1 className="text-3xl font-bold mb-6">Главная страница</h1>
-            <p className="mb-4">Добро пожаловать на главную страницу!</p>
+            <h1 className="text-3xl font-bold mb-6">Добро пожаловать на главную страницу!</h1>
             <button 
                 onClick={()=>setIsModalOpen(true)}
                 className="static bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
