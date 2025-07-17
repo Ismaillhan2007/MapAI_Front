@@ -6,7 +6,7 @@ const Layout = ()=>{
         <nav className="bg-amber-100 p-4">
             <ul className="flex space-x-4">
                 <li>
-                    <Link to="/" className="text-blue-600 hover:text-blue-800">
+                    <Link to="/" className="text-black hover:text-black font-mono font-bold">
                         Главная
                     </Link>
                 </li>
