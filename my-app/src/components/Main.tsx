@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import '../index.css';
 import '../App.css'
+import { sendAIQuestion } from '../services/Api';
 
 const Modal = ({
     isOpen,
@@ -38,8 +39,51 @@ const Modal = ({
         );
 };
 
+interface Message {
+    text: string;
+    isUser: boolean;
+    timestamp: Date;
+}
+
 const Main =()=>{
     const[isModalOpen,setIsModalOpen] = useState(true);
+    const[messages, setMessages] = useState<Message[]>([]);
+    const[currentQuestion, setCurrentQuestion] = useState('');
+    const[isLoading, setIsLoading] = useState(false);
+    
+    const handleSendQuestion = async () => {
+        if (!currentQuestion.trim()) return;
+        
+        const userMessage: Message = {
+            text: currentQuestion,
+            isUser: true,
+            timestamp: new Date()
+        };
+        
+        setMessages(prev => [...prev, userMessage]);
+        setIsLoading(true);
+        
+        try {
+            const response = await sendAIQuestion(currentQuestion);
+            const aiMessage: Message = {
+                text: response.response || response.answer || 'No response received',
+                isUser: false,
+                timestamp: new Date()
+            };
+            setMessages(prev => [...prev, aiMessage]);
+        } catch (error) {
+            const errorMessage: Message = {
+                text: 'Sorry, there was an error processing your question.',
+                isUser: false,
+                timestamp: new Date()
+            };
+            setMessages(prev => [...prev, errorMessage]);
+        } finally {
+            setIsLoading(false);
+            setCurrentQuestion('');
+        }
+    };
+
     return(
         <div className="p-8">
             <h1 className="text-3xl font-bold mb-6">Добро пожаловать на главную страницу!</h1>
@@ -50,7 +94,53 @@ const Main =()=>{
                 Start chat 
             </button>
             <Modal isOpen={isModalOpen} OnClose={() => setIsModalOpen(false)}>
-                <button >Start chat</button>
+                <div className="w-96 h-96 flex flex-col">
+                    <h2 className="text-xl font-bold mb-4">AI Chat</h2>
+                    
+                    <div className="flex-1 overflow-y-auto mb-4 p-3 border rounded bg-gray-50">
+                        {messages.length === 0 ? (
+                            <p className="text-gray-500 text-center">Start a conversation with AI!</p>
+                        ) : (
+                            messages.map((message, index) => (
+                                <div key={index} className={`mb-2 ${message.isUser ? 'text-right' : 'text-left'}`}>
+                                    <div className={`inline-block p-2 rounded max-w-xs ${
+                                        message.isUser 
+                                            ? 'bg-blue-500 text-white' 
+                                            : 'bg-white border'
+                                    }`}>
+                                        {message.text}
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                        {isLoading && (
+                            <div className="text-left mb-2">
+                                <div className="inline-block p-2 rounded bg-gray-200">
+                                    AI is thinking...
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    
+                    <div className="flex gap-2">
+                        <input
+                            type="text"
+                            value={currentQuestion}
+                            onChange={(e) => setCurrentQuestion(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && handleSendQuestion()}
+                            placeholder="Ask AI a question..."
+                            className="flex-1 p-2 border rounded"
+                            disabled={isLoading}
+                        />
+                        <button
+                            onClick={handleSendQuestion}
+                            disabled={isLoading || !currentQuestion.trim()}
+                            className="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300"
+                        >
+                            Send
+                        </button>
+                    </div>
+                </div>
             </Modal>
         </div>
 
