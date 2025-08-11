@@ -3,6 +3,7 @@ import { useState } from "react";
 import '../index.css';
 import '../App.css'
 import { sendAIQuestion } from '../services/Api';
+import UserRegistration from '../services/Register'; // Импортируйте компонент регистрации
 
 const Modal = ({
     isOpen,
@@ -45,11 +46,12 @@ interface Message {
     timestamp: Date;
 }
 
-const Main =()=>{
-    const[isModalOpen,setIsModalOpen] = useState(true);
-    const[messages, setMessages] = useState<Message[]>([]);
-    const[currentQuestion, setCurrentQuestion] = useState('');
-    const[isLoading, setIsLoading] = useState(false);
+const Main = () => {
+    const [isModalOpen, setIsModalOpen] = useState(true);
+    const [isRegisterOpen, setIsRegisterOpen] = useState(false); // новое состояние для регистрации
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [currentQuestion, setCurrentQuestion] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     
     const handleSendQuestion = async () => {
         if (!currentQuestion.trim()) return;
@@ -84,21 +86,23 @@ const Main =()=>{
         }
     };
 
-    return(
+    return (
         <div className="p-8 ">
             <h1 className="text-3xl font-bold mb-6">Добро пожаловать на главную страницу!</h1>
-            <div className="gap-4">
-            <button 
-                onClick={()=>setIsModalOpen(true)}
-                className="static bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-3"
-            >
-                Start chat 
-            </button>
-            <button className="static bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-3">
-                Registration
-            </button>
+            <div className="flex gap-4 mb-6">
+                <button 
+                    onClick={() => setIsModalOpen(true)}
+                    className="static bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                >
+                    Start chat 
+                </button>
+                <button
+                    onClick={() => setIsRegisterOpen(true)} // открывает модал регистрации
+                    className="static bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                >
+                    Registration
+                </button>
             </div>
-           
             <Modal isOpen={isModalOpen} OnClose={() => setIsModalOpen(false)}>
                 <div className="w-96 h-96 flex flex-col">
                     <h2 className="text-xl font-bold mb-4">AI Chat</h2>
@@ -147,6 +151,9 @@ const Main =()=>{
                         </button>
                     </div>
                 </div>
+            </Modal>
+            <Modal isOpen={isRegisterOpen} OnClose={() => setIsRegisterOpen(false)}>
+                <UserRegistration />
             </Modal>
         </div>
 
