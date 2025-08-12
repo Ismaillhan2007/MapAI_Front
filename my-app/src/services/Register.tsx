@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import '../App.css';
-
+import { useAuthStore } from "../store";
 const API_BASE_URL = 'http://localhost:8000';
 
 const UserRegistration = () => {
@@ -17,6 +17,8 @@ const UserRegistration = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
+    const user = useAuthStore(state=>state.user)
+    const setUser = useAuthStore(state=>state.setUser)
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({
             ...formData,
@@ -32,13 +34,13 @@ const UserRegistration = () => {
         try {
             const response = await axios.post(`${API_BASE_URL}/api/register/`, formData);
             setSuccess('Registration successful!');
+            
         } catch (err: any) {
             setError(err.response?.data?.message || 'Registration failed');
         } finally {
             setLoading(false);
         }
     };
-
     return (
         <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
             <h2 className="text-2xl font-bold mb-4">User Registration</h2>

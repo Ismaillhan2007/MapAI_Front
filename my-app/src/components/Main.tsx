@@ -4,6 +4,8 @@ import '../index.css';
 import '../App.css'
 import { sendAIQuestion } from '../services/Api';
 import UserRegistration from '../services/Register'; // Импортируйте компонент регистрации
+import UserProfile from './UserProfile';
+import Login from '../services/Login';
 
 const Modal = ({
     isOpen,
@@ -49,10 +51,11 @@ interface Message {
 const Main = () => {
     const [isModalOpen, setIsModalOpen] = useState(true);
     const [isRegisterOpen, setIsRegisterOpen] = useState(false); // новое состояние для регистрации
+    const [isProfileOpen, setIsProfileOpen] = useState(false); // новое состояние для профиля
     const [messages, setMessages] = useState<Message[]>([]);
     const [currentQuestion, setCurrentQuestion] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    
+    const [isLoginOpen,setIsLoginOpen] = useState(false);
     const handleSendQuestion = async () => {
         if (!currentQuestion.trim()) return;
         
@@ -101,6 +104,18 @@ const Main = () => {
                     className="static bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                 >
                     Registration
+                </button>
+                <button
+                    onClick={() => setIsLoginOpen(true)} // открывает модал логина
+                    className="static bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
+                >
+                    Login
+                </button>
+                <button
+                    onClick={() => setIsProfileOpen(true)} // открывает модал профиля
+                    className="static bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                >
+                    Profile
                 </button>
             </div>
             <Modal isOpen={isModalOpen} OnClose={() => setIsModalOpen(false)}>
@@ -154,6 +169,12 @@ const Main = () => {
             </Modal>
             <Modal isOpen={isRegisterOpen} OnClose={() => setIsRegisterOpen(false)}>
                 <UserRegistration />
+            </Modal>
+            <Modal isOpen={isLoginOpen} OnClose={() => setIsLoginOpen(false)}>
+                <Login />
+            </Modal>
+            <Modal isOpen={isProfileOpen} OnClose={() => setIsProfileOpen(false)}>
+                <UserProfile />
             </Modal>
         </div>
 
