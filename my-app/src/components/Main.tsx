@@ -90,8 +90,8 @@ const Main = () => {
     };
 
     return (
-        <div className="p-8 ">
-            <h1 className="text-3xl font-bold mb-6">Добро пожаловать на главную страницу!</h1>
+        <div className="p-8 bg-black min-h-screen">
+            <h1 className="text-3xl font-bold mb-6 text-white">Добро пожаловать на главную страницу!</h1>
             <div className="flex gap-4 mb-6">
                 <button 
                     onClick={() => setIsModalOpen(true)}
