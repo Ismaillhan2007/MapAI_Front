@@ -3,9 +3,6 @@ import { useState } from "react";
 import '../index.css';
 import '../App.css'
 import { sendAIQuestion } from '../services/Api';
-import UserRegistration from '../services/Register'; // Импортируйте компонент регистрации
-import UserProfile from './UserProfile';
-import Login from '../services/Login';
 
 const Modal = ({
     isOpen,
@@ -42,34 +39,58 @@ const Modal = ({
         );
 };
 
-const Main = () => {
-    const [isRegisterOpen, setIsRegisterOpen] = useState(false); // новое состояние для регистрации
-    const [isProfileOpen, setIsProfileOpen] = useState(false); // новое состояние для профиля
-    const [isLoginOpen,setIsLoginOpen] = useState(false);
-    return (
+interface Message {
+    text: string;
+    isUser: boolean;
+    timestamp: Date;
+}
+const Chat = () => {
+    const [isModalOpen, setIsModalOpen] = useState(true);
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [currentQuestion, setCurrentQuestion] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    
+    const handleSendQuestion = async () => {
+        if (!currentQuestion.trim()) return;
+        
+        const userMessage: Message = {
+            text: currentQuestion,
+            isUser: true,
+            timestamp: new Date()
+        };
+        
+        setMessages(prev => [...prev, userMessage]);
+        setIsLoading(true);
+        
+        try {
+            const response = await sendAIQuestion(currentQuestion);
+            const aiMessage: Message = {
+                text: response.response || response.answer || 'No response received',
+                isUser: false,
+                timestamp: new Date()
+            };
+            setMessages(prev => [...prev, aiMessage]);
+        } catch (error) {
+            const errorMessage: Message = {
+                text: 'Sorry, there was an error processing your question.',
+                isUser: false,
+                timestamp: new Date()
+            };
+            setMessages(prev => [...prev, errorMessage]);
+        } finally {
+            setIsLoading(false);
+            setCurrentQuestion('');
+        }
+    };
+    return(
         <div className="p-8 bg-black min-h-screen">
-            <h1 className="text-3xl font-bold mb-6 text-white">Добро пожаловать на главную страницу!</h1>
-            <div className="flex gap-4 mb-6">
-                <button
-                    onClick={() => setIsRegisterOpen(true)} // открывает модал регистрации
-                    className="static bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                <button 
+                    onClick={() => setIsModalOpen(true)}
+                    className="text-black hover:text-black font-mono font-bold"
                 >
-                    Registration
+                    Start chat 
                 </button>
-                <button
-                    onClick={() => setIsLoginOpen(true)} // открывает модал логина
-                    className="static bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
-                >
-                    Login
-                </button>
-                <button
-                    onClick={() => setIsProfileOpen(true)} // открывает модал профиля
-                    className="static bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-                >
-                    Profile
-                </button>
-            </div>
-            {/* <Modal isOpen={isModalOpen} OnClose={() => setIsModalOpen(false)}>
+                 <Modal isOpen={isModalOpen} OnClose={() => setIsModalOpen(false)}>
                 <div className="w-96 h-96 flex flex-col">
                     <h2 className="text-xl font-bold mb-4">AI Chat</h2>
                     
@@ -117,22 +138,11 @@ const Main = () => {
                         </button>
                     </div>
                 </div>
-            // </Modal> */}
-            <Modal isOpen={isRegisterOpen} OnClose={() => setIsRegisterOpen(false)}>
-                <UserRegistration />
-            </Modal>
-            <Modal isOpen={isLoginOpen} OnClose={() => setIsLoginOpen(false)}>
-                <Login />
-            </Modal>
-            <Modal isOpen={isProfileOpen} OnClose={() => setIsProfileOpen(false)}>
-                <UserProfile />
             </Modal>
         </div>
-
     );
 };
 
 
 
-
-export default Main;
+export default Chat;

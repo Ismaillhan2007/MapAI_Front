@@ -1,5 +1,5 @@
 import { Outlet, Link } from "react-router-dom";
-
+import AI from '../components/AI'
 const Layout = ()=>{
     return(
         <>
@@ -11,7 +11,9 @@ const Layout = ()=>{
                     </Link>
                 </li>
                 <li>
-                    
+                    <Link to="/Chat"  className="text-black hover:text-black font-mono font-bold">
+                        Chat
+                    </Link>
                 </li>
             </ul>
         </nav>
