@@ -10,6 +10,9 @@ const Layout = ()=>{
                         Главная
                     </Link>
                 </li>
+                <li>
+                    
+                </li>
             </ul>
         </nav>
         <Outlet />
